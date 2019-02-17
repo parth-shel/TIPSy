@@ -13,7 +13,9 @@ sid32 done;
 process	main(void) {
 	kprintf("\nHello World!\n");
 
-        done = semcreate(10);
+        const uint32 num_processes = 10;
+
+        done = semcreate(0);
 
         uint32 start_time = clktime;
 
@@ -31,12 +33,15 @@ process	main(void) {
         //recvclr();
         //resume(create(shell, INITSTK, 50, "shell", 1, CONSOLE));
 
-        wait(done);
+        for (uint32 i = 0; i < num_processes; i++)
+            wait(done);
 
         uint32 end_time = clktime;
 
         kprintf("Total Simulation time: %d\n", end_time - start_time);
         kprintf("Context Switches: %d\n", ctxswcnt);
+
+        semdelete(done);
 
         kill(currpid);
 
