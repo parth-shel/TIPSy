@@ -2,9 +2,11 @@
 
 #include <xinu.h>
 
+extern sid32 done;
+
 void cpubound() {
-    for (int i = 0; i < 150; i++) {
-        for (int j = 0; j < 150; j++) {
+    for (int i = 0; i < 200; i++) {
+        for (int j = 0; j < 200; j++) {
             // calculate i^j
             uint32 base = i, exponent = j;
             long long result = 1;
@@ -37,11 +39,18 @@ void cpubound() {
             memcpy(dest, src, strlen(src)+1);
         }
     }
+    
+    intmask mask = disable();
 
     kprintf("CPU bound process.\n");
 
     kprintf("PID: %d\n", currpid);
     kprintf("CPU time: %d\n", getcputime(currpid));
     kprintf("priority: %d\n", getprio(currpid));
-    kprintf("preempt: %d\n", preempt);
+    
+    restore(mask);
+
+    signal(done);
+
+    kill(currpid);
 }

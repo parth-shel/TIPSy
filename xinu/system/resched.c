@@ -4,7 +4,7 @@
 
 struct	defer	Defer;
 
-static uint32   ctxswcnt = 0;
+uint32   ctxswcnt = 0;
 
 /*------------------------------------------------------------------------
  *  resched  -  Reschedule processor to highest priority eligible process
