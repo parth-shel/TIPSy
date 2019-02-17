@@ -6,7 +6,7 @@ struct	defer	Defer;
 
 static uint32 ctxswtime = 0;   /* Store the time before context switch */
 
-static uint32 ctxswcnt = 0;
+uint32 ctxswcnt = 0;
 
 extern uint32 clkmilli;
 
