@@ -27,7 +27,7 @@
 #define	INITSTK		65536	/* Initial process stack size		*/
 #define	INITPRIO	20	/* Initial process priority		*/
 #define	INITRET		userret	/* Address to which process returns	*/
-#define MAXPRIO         32767;  /* Max. pssible peocess priority        */
+static const pri16 MAXPRIO = 32767;  /* Max. pssible peocess priority        */
 
 /* Inline code to check process ID (assumes interrupts are disabled)	*/
 
