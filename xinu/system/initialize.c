@@ -189,6 +189,7 @@ static	void	sysinit()
 	/* Initialize the Null process entry */	
 
 	prptr = &proctab[NULLPROC];
+        prptr->prtime = 0;
 	prptr->prstate = PR_CURR;
 	prptr->prprio = 0;
 	strncpy(prptr->prname, "prnull", 7);
