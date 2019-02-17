@@ -1,5 +1,7 @@
 /* stacktrace.c - stacktrace */
 #include <xinu.h>
+static unsigned long	*esp;
+static unsigned long	*ebp;
 
 #define STKDETAIL
 
@@ -15,8 +17,10 @@ syscall stacktrace(int pid)
 	if (pid != 0 && isbadpid(pid))
 		return SYSERR;
 	if (pid == currpid) {
-		asm("movl %%esp, %0\n" :"=r"(sp));
-		asm("movl %%ebp, %0\n" :"=r"(fp));
+		asm("movl %esp,esp");
+		asm("movl %ebp,ebp");
+		sp = esp;
+		fp = ebp;
 	} else {
 		sp = (unsigned long *)proc->prstkptr;
 		fp = sp + 2; 		/* where ctxsw leaves it */

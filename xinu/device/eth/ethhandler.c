@@ -6,21 +6,16 @@
  * ethhandler  -  Interrupt handler for Intel Quark Ethernet
  *------------------------------------------------------------------------
  */
-void	ethhandler (
-		int32	arg	/* Interrupt handler argument	*/
-		)
+interrupt	ethhandler(void)
 {
-	struct	dentry *devptr;		/* Device table entry pointer	*/
 	struct	ethcblk	*ethptr;	/* Ethertab entry pointer	*/
 	struct	eth_q_csreg *csrptr;	/* Pointer to Ethernet CRSs	*/
 	struct	eth_q_tx_desc *tdescptr;/* Pointer to tx descriptor	*/
 	struct	eth_q_rx_desc *rdescptr;/* Pointer to rx descriptor	*/
 	volatile uint32	sr;		/* Copy of status register	*/
-	int32	count;			/* Variable used to count pkts	*/
-	int32	curr_ringsize;		/* Current ring size		*/
+	uint32	count;			/* Variable used to count pkts	*/
 
-	devptr = (struct dentry *)arg;
-	ethptr = &ethertab[devptr->dvminor];
+	ethptr = &ethertab[devtab[ETHER0].dvminor];
 
 	csrptr = (struct eth_q_csreg *)ethptr->csr;
 
@@ -47,24 +42,13 @@ void	ethhandler (
 		tdescptr = (struct eth_q_tx_desc *)ethptr->txRing +
 							ethptr->txHead;
 
-		/* Compute the current ring size */
-
-		count = semcount(ethptr->osem);
-
-		if(count < 0) {
-			curr_ringsize = ethptr->txRingSize;
-		}
-		else {
-			curr_ringsize = ethptr->txRingSize - count;
-		}
-
-		/* Start the packet count at zero */
+		/* Start packet count at zero */
 
 		count = 0;
 
 		/* Repeat until we process all the descriptor slots */
 
-		while(curr_ringsize > 0) {
+		while(ethptr->txHead != ethptr->txTail) {
 
 			/* If the descriptor is owned by DMA, stop here */
 
@@ -75,10 +59,6 @@ void	ethhandler (
 			/* Descriptor was processed; increment count	*/
 
 			count++;
-
-			/* Decrement the current ring size */
-
-			curr_ringsize--;
 
 			/* Go to the next descriptor */
 
