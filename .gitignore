@@ -25,10 +25,16 @@
 *.bin
 
 # Xinu build files
-xinu/compile/config/config
-xinu/compile/config/y.tab.h
-xinu/compile/config/parse.c
+xinu/config/config
+xinu/config/y.tab.c
+xinu/config/lex.yy.c
 xinu/compile/version
-xinu/compile/vn
+xinu/compile/.vers_num
+xinu/compile/.defs
+xinu/compile/xinu
+xinu/compile/xinu.map
 xinu/include/conf.h
 xinu/system/conf.c
+
+# Swap files
+**/*.sw?
