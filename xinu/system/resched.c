@@ -6,6 +6,8 @@ struct	defer	Defer;
 
 static uint32 ctxswtime = 0;   /* Store the time before context switch */
 
+static uint32 ctxswcnt = 0;
+
 extern uint32 clkmilli;
 
 /*------------------------------------------------------------------------
@@ -56,6 +58,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	ptnew = &proctab[currpid];
 	ptnew->prstate = PR_CURR;
 	preempt = QUANTUM;		/* Reset time slice for process	*/
+        ctxswcnt++;
 	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
 
 	/* Old process returns here when resumed */
