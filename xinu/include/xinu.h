@@ -20,6 +20,7 @@
 #include <rdisksys.h>
 #include <lfilesys.h>
 #include <ether.h>
+#include <gpio.h>
 #include <net.h>
 #include <ip.h>
 #include <arp.h>
@@ -39,3 +40,4 @@
 #include <multiboot.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>

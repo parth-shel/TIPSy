@@ -24,8 +24,19 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 
 	ptold = &proctab[currpid];
 
+        if ((currpid != NULLPROC) && (ptold->prstate != PR_FREE)) {
+            if (ptold->prquota < UINT_MAX) {
+                if (ptold->prtime >= ptold->prquota) {
+                    kill(currpid);
+                }
+            }
+            ptold->prprio = ptold->prbaseprio + 2 * ptold->prextprio + ptold->prrecent;
+            if (ptold->prprio < MINPRIO) ptold->prprio = MINPRIO;
+            else if (ptold->prprio > MAXPRIO) ptold->prprio = MAXPRIO;
+        }
+
 	if (ptold->prstate == PR_CURR) {  /* Process remains eligible */
-		if (ptold->prprio > firstkey(readylist)) {
+		if (ptold->prprio > lastkey(readylist)) {
 			return;
 		}
 
@@ -37,10 +48,12 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 
 	/* Force context switch to highest priority ready process */
 
-	currpid = dequeue(readylist);
+	currpid = getlast(readylist);
+        queuetab[currpid].qnext = EMPTY;
+        queuetab[currpid].qprev = EMPTY;
 	ptnew = &proctab[currpid];
 	ptnew->prstate = PR_CURR;
-	preempt = QUANTUM;		/* Reset time slice for process	*/
+	preempt = 0;		/* Reset time slice for process	*/
 	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
 
 	/* Old process returns here when resumed */

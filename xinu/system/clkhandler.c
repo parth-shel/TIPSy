@@ -23,6 +23,14 @@ void	clkhandler()
 		count1000 = 1000;
 	}
 
+        /* Increment current process' prrecent  */
+        if (currpid != NULLPROC) {
+            struct procent *prptr = &proctab[currpid];
+            if (count1000 % 10 == 0)
+                prptr->prrecent++;
+            prptr->prtime++;
+        }
+
 	/* Handle sleeping processes if any exist */
 
 	if(!isempty(sleepq)) {
@@ -35,11 +43,11 @@ void	clkhandler()
 		}
 	}
 
-	/* Decrement the preemption counter, and reschedule when the */
+	/* Increment the preemption counter, and reschedule when the */
 	/*   remaining time reaches zero			     */
 
-	if((--preempt) <= 0) {
-		preempt = QUANTUM;
+	if((++preempt) >= proctab[currpid].prquantum) {
+		preempt = 0;
 		resched();
 	}
 }

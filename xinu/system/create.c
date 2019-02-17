@@ -40,7 +40,17 @@ pid32	create(
 
 	/* Initialize process table entry for new process */
 	prptr->prstate = PR_SUSP;	/* Initial state is suspended	*/
-	prptr->prprio = priority;
+        prptr->prquota = UINT_MAX;
+        prptr->prtime = 0;
+        prptr->prquantum = QUANTUM;
+        prptr->prrecent = 0;
+        prptr->prbaseprio = 50;
+        if (priority > MINEXTPRIO) priority = MINEXTPRIO;
+        else if (priority < MAXEXTPRIO) priority = MAXEXTPRIO;
+	prptr->prextprio = priority;
+        prptr->prprio = prptr->prbaseprio + (2 * prptr->prextprio);
+        if (prptr->prprio > MAXPRIO) prptr->prprio = MAXPRIO;
+        else if (prptr->prprio < MINPRIO) prptr->prprio = MINPRIO;
 	prptr->prstkbase = (char *)saddr;
 	prptr->prstklen = ssize;
 	prptr->prname[PNMLEN-1] = NULLCH;

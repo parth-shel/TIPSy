@@ -30,6 +30,44 @@ pid32	currpid;		/* ID of currently executing process	*/
 
 #define	CONSOLE_RESET	" \033[0m\033[2J\033[;H"
 
+#define LOAD_PERIOD 60
+static uint32 loads[LOAD_PERIOD];
+static uint32 seconds;
+static uint32 loadSum;
+
+static process sched_daemon() {
+    while (TRUE) {
+        // update aveload
+        if (seconds >= LOAD_PERIOD)
+            loadSum -= loads[seconds % LOAD_PERIOD];
+        loads[seconds%LOAD_PERIOD] = prcount;
+        loadSum += loads[seconds%LOAD_PERIOD];
+        seconds++;
+        uint32 divisor = (seconds >= LOAD_PERIOD)? LOAD_PERIOD : seconds;
+        uint32 aveload = loadSum / divisor;
+        intmask mask = disable();
+        struct procent *prptr;
+        for (uint32 i = 1; i < NPROC; i++) {
+            if (i == NULLPROC) continue;
+            prptr = &proctab[i];
+            if (prptr->prstate == PR_FREE) continue;
+            prptr->prrecent = (aveload * prptr->prrecent) / ((2 * aveload) + 1) + prptr->prextprio;
+            if (prptr->prrecent < 0) prptr->prrecent = 0;
+            prptr->prprio = prptr->prbaseprio + 2 * prptr->prextprio + prptr->prrecent;
+            if (prptr->prprio < MINPRIO) prptr->prprio = MINPRIO;
+            if (prptr->prprio > MAXPRIO) prptr->prprio = MAXPRIO;
+            prptr->prquantum = QUANTUM + prptr->prrecent;
+            if (prptr->prstate == PR_READY) {
+                getitem(i);
+                insert(i, readylist, proctab[i].prprio);
+            }
+        }
+        restore(mask);
+        sleep(1);
+    }
+    return OK;
+}
+
 /*------------------------------------------------------------------------
  * nulluser - initialize the system and become the null process
  *
@@ -74,14 +112,20 @@ void	nulluser()
 	kprintf("           [0x%08X to 0x%08X]\n\n",
 		(uint32)&data, (uint32)&ebss - 1);
 
+
+        /* Start the scheduler daemon */
+        seconds = 0;
+        loadSum = 0;
+        pid32 daemon_pid = create(sched_daemon, INITSTK, MAXEXTPRIO, "SDaemon", 0);
+        resume(system(daemon_pid));
+
 	/* Enable interrupts */
 
 	enable();
 
-        /* Limit network relevant calls for CS503 courses   */
-	///* Initialize the network stack and start processes */
+	/* Initialize the network stack and start processes */
 
-	//net_init();
+	net_init();
 
 	/* Create a process to finish startup and start main */
 
@@ -107,26 +151,25 @@ void	nulluser()
  */
 local process	startup(void)
 {
-        /* Limit network relevant calls for CS503 courses   */
-	//uint32	ipaddr;			/* Computer's IP address	*/
-	//char	str[128];		/* String used to format output	*/
+	uint32	ipaddr;			/* Computer's IP address	*/
+	char	str[128];		/* String used to format output	*/
 
 
-	///* Use DHCP to obtain an IP address and format it */
+	/* Use DHCP to obtain an IP address and format it */
 
-	//ipaddr = getlocalip();
-	//if ((int32)ipaddr == SYSERR) {
-	//	kprintf("Cannot obtain an IP address\n");
-	//} else {
-	//	/* Print the IP in dotted decimal and hex */
-	//	ipaddr = NetData.ipucast;
-	//	sprintf(str, "%d.%d.%d.%d",
-	//		(ipaddr>>24)&0xff, (ipaddr>>16)&0xff,
-	//		(ipaddr>>8)&0xff,        ipaddr&0xff);
-	//
-	//	kprintf("Obtained IP address  %s   (0x%08x)\n", str,
-	//							ipaddr);
-	//}
+	ipaddr = getlocalip();
+	if ((int32)ipaddr == SYSERR) {
+		kprintf("Cannot obtain an IP address\n");
+	} else {
+		/* Print the IP in dotted decimal and hex */
+		ipaddr = NetData.ipucast;
+		sprintf(str, "%d.%d.%d.%d",
+			(ipaddr>>24)&0xff, (ipaddr>>16)&0xff,
+			(ipaddr>>8)&0xff,        ipaddr&0xff);
+	
+		kprintf("Obtained IP address  %s   (0x%08x)\n", str,
+								ipaddr);
+	}
 
 	/* Create a process to execute function main() */
 

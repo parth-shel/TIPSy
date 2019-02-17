@@ -27,6 +27,10 @@
 #define	INITSTK		65536	/* Initial process stack size		*/
 #define	INITPRIO	20	/* Initial process priority		*/
 #define	INITRET		userret	/* Address to which process returns	*/
+#define MAXEXTPRIO      -20
+#define MINEXTPRIO      20
+#define MAXPRIO         127
+#define MINPRIO         0
 
 /* Inline code to check process ID (assumes interrupts are disabled)	*/
 
@@ -52,6 +56,12 @@ struct procent {		/* Entry in the process table		*/
 	umsg32	prmsg;		/* Message sent to this process		*/
 	bool8	prhasmsg;	/* Nonzero iff msg is valid		*/
 	int16	prdesc[NDESC];	/* Device descriptors for process	*/
+        int32   prquantum;      /* Quantum for this process             */
+        int32   prrecent;       /* recent CPU utilization               */
+        int32   prextprio;      /* externally assigned priority         */
+        int32   prbaseprio;     /* base priority of the process: 0 = system, 50 = user */
+        uint32  prquota;        /* run-time quota for the process       */
+        uint32  prtime;         /* run-time of the process              */
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/
