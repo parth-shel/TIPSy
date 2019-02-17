@@ -1,26 +1,12 @@
-# Prerequisites
-*.d
-
 # Object files
 *.o
-*.ko
-*.obj
-*.elf
 
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
+# Dependency files
+*.d
 
 # Libraries
 *.lib
 *.a
-*.la
-*.lo
 
 # Shared objects (inc. Windows DLLs)
 *.dll
@@ -32,21 +18,17 @@
 *.exe
 *.out
 *.app
-*.i*86
-*.x86_64
-*.hex
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
+# Binary Images
+*.elf
+*.boot
+*.bin
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Xinu build files
+xinu/compile/config/config
+xinu/compile/config/y.tab.h
+xinu/compile/config/parse.c
+xinu/compile/version
+xinu/compile/vn
+xinu/include/conf.h
+xinu/system/conf.c
