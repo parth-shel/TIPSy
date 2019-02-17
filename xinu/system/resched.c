@@ -4,6 +4,8 @@
 
 struct	defer	Defer;
 
+static uint32 ctxswcnt = 0;
+
 /*------------------------------------------------------------------------
  *  resched  -  Reschedule processor to highest priority eligible process
  *------------------------------------------------------------------------
@@ -54,6 +56,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	ptnew = &proctab[currpid];
 	ptnew->prstate = PR_CURR;
 	preempt = 0;		/* Reset time slice for process	*/
+        ctxswcnt++;
 	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
 
 	/* Old process returns here when resumed */
