@@ -4,6 +4,10 @@
 
 struct	defer	Defer;
 
+static uint32 ctxswtime = 0;   /* Store the time before context switch */
+
+extern uint32 clkmilli;
+
 /*------------------------------------------------------------------------
  *  resched  -  Reschedule processor to highest priority eligible process
  *------------------------------------------------------------------------
@@ -23,6 +27,17 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	/* Point to process table entry for the current (old) process */
 
 	ptold = &proctab[currpid];
+
+        uint32 delta = clkmilli - ctxswtime;
+
+        ptold->prtime += delta;
+
+        ctxswtime = clkmilli;
+
+        /* Dynamically update the priority of the process */
+        if (currpid != NULLPROC) {
+            ptold->prprio = MAXPRIO - ptold->prtime;
+        }
 
 	if (ptold->prstate == PR_CURR) {  /* Process remains eligible */
 		if (ptold->prprio > firstkey(readylist)) {
