@@ -23,6 +23,12 @@ void	clkhandler()
 		count1000 = 1000;
 	}
 
+        /* Increment current process' CPU time */
+        if (currpid != NULLPROC) {
+            struct procent *prptr = &proctab[currpid];
+            prptr->prtime++;
+        }
+
 	/* Handle sleeping processes if any exist */
 
 	if(!isempty(sleepq)) {
