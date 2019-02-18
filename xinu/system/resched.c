@@ -57,7 +57,8 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	currpid = dequeue(readylist);
 	ptnew = &proctab[currpid];
 	ptnew->prstate = PR_CURR;
-	preempt = QUANTUM;		/* Reset time slice for process	*/
+        uint32 boost = (uint32)(((double) ptnew->prprio / MAXPRIO) * QUANTUM);
+	preempt = QUANTUM + boost;		/* Reset time slice for process	*/
         ctxswcnt++;
 	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
 

@@ -14,7 +14,8 @@ syscall getcputime(pid32 pid) {
     }
     cputime = proctab[pid].prtime;
     if (pid == currpid) {
-        uint32 delta = QUANTUM - preempt;
+        uint32 boost = (uint32)(((double) proctab[currpid].prprio / MAXPRIO) * QUANTUM);
+        uint32 delta = (QUANTUM + boost) - preempt;
         cputime += delta;
     }
     restore(mask);
