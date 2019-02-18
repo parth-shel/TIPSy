@@ -57,7 +57,7 @@ static process sched_daemon() {
             if (prptr->prprio < MINPRIO) prptr->prprio = MINPRIO;
             if (prptr->prprio > MAXPRIO) prptr->prprio = MAXPRIO;
             prptr->prquantum = QUANTUM + prptr->prrecent;
-            if (prptr->prstate == PR_READY) {
+            if (proctab[i].prstate == PR_READY) {
                 getitem(i);
                 insert(i, readylist, proctab[i].prprio);
             }
@@ -117,7 +117,8 @@ void	nulluser()
         seconds = 0;
         loadSum = 0;
         pid32 daemon_pid = create(sched_daemon, INITSTK, MAXEXTPRIO, "SDaemon", 0);
-        resume(system(daemon_pid));
+        system(daemon_pid);
+        resume(daemon_pid);
 
 	/* Enable interrupts */
 
@@ -240,6 +241,9 @@ static	void	sysinit()
 	prptr->prstkbase = getstk(NULLSTK);
 	prptr->prstklen = NULLSTK;
 	prptr->prstkptr = 0;
+        prptr->prprio = 128;
+        prptr->prrecent = 0;
+        prptr->prquantum = QUANTUM;
 	currpid = NULLPROC;
 	
 	/* Initialize semaphores */

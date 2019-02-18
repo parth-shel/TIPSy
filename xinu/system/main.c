@@ -19,16 +19,16 @@ process	main(void) {
 
         uint32 start_time = clktime;
 
-        resume(create((void*) cpubound, 1024, 50, "cpubound", 0, NULL));
-        resume(create((void*) iobound, 1024, 50, "iobound", 0, NULL));
-        resume(create((void*) cpubound, 1024, 50, "cpubound", 0, NULL));
-        resume(create((void*) iobound, 1024, 50, "iobound", 0, NULL));
-        resume(create((void*) cpubound, 1024, 50, "cpubound", 0, NULL));
-        resume(create((void*) iobound, 1024, 50, "iobound", 0, NULL));
-        resume(create((void*) cpubound, 1024, 50, "cpubound", 0, NULL));
-        resume(create((void*) iobound, 1024, 50, "iobound", 0, NULL));
-        resume(create((void*) cpubound, 1024, 50, "cpubound", 0, NULL));
-        resume(create((void*) iobound, 1024, 50, "iobound", 0, NULL));
+        resume(create((void*) cpubound, 1024, 0, "cpubound", 0, NULL));
+        resume(create((void*) iobound, 1024, 0, "iobound", 0, NULL));
+        resume(create((void*) cpubound, 1024, 0, "cpubound", 0, NULL));
+        resume(create((void*) iobound, 1024, 0, "iobound", 0, NULL));
+        resume(create((void*) cpubound, 1024, 0, "cpubound", 0, NULL));
+        resume(create((void*) iobound, 1024, 0, "iobound", 0, NULL));
+        resume(create((void*) cpubound, 1024, 0, "cpubound", 0, NULL));
+        resume(create((void*) iobound, 1024, 0, "iobound", 0, NULL));
+        resume(create((void*) cpubound, 1024, 0, "cpubound", 0, NULL));
+        resume(create((void*) iobound, 1024, 0, "iobound", 0, NULL));
 
         //recvclr();
         //resume(create(shell, INITSTK, 50, "shell", 1, CONSOLE));
