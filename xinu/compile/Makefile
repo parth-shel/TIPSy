@@ -16,9 +16,9 @@ TOPDIR		=	..
 CC		=	${COMPILER_ROOT}gcc
 LD		=	${COMPILER_ROOT}ld
 OBJCOPY		=	${COMPILER_ROOT}objcopy
-XINU		=	$(TOPDIR)/compile/xinu
+XINU		=	$(TOPDIR)/compile/xinu.elf
 XINUBIN		=	$(TOPDIR)/compile/xinu.bin
-XINUXBIN	=	$(TOPDIR)/compile/xinu.xbin
+XINUXBIN	=	$(TOPDIR)/compile/xinu
 MAKEXBIN 	=	$(TOPDIR)/compile/bin/buildxbin
 BUILDMAKE	=	$(TOPDIR)/compile/bin/build-make
 
